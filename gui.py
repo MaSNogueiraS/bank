@@ -10,9 +10,20 @@ from operations import add_new_client, delete_client, list_clients, debit_from_a
 bank = Bank()
 load_clients_from_file(bank)
 
+def centralize_window(window):
+    window.update()
+    screen_width = window.winfo_screenwidth()
+    screen_height = window.winfo_screenheight()
+    width = window.winfo_width()
+    height = window.winfo_height()
+    x = (screen_width - width) // 2
+    y = (screen_height - height) // 2
+    window.geometry(f"{width}x{height}+{x}+{y}")
+
 def on_new_client():
     window = Toplevel(root)
     window.title("New Client")
+    window.geometry("500x500")
 
     Label(window, text="Company Name (Razão Social):").grid(row=0, column=0, padx=10, pady=10)
     razao_social_entry = Entry(window)
@@ -49,33 +60,67 @@ def on_new_client():
         if success:
             window.destroy()
 
-    Button(window, text="Submit", command=submit).grid(row=5, column=0, columnspan=2, pady=20)
+    submit_button = Button(window, text="Submit", command=submit)
+    submit_button.place(relx=0.5, rely=0.95, anchor=tk.CENTER)
+    centralize_window(window)
 
 def on_delete_client():
     CNPJ = simpledialog.askstring("Delete Client", "Enter the CNPJ of the client to delete:")
+    if not CNPJ:
+        return
     success, message = delete_client(bank, CNPJ)
     messagebox.showinfo("Info", message)
 
 def on_list_clients():
-    clients_data = list_clients(bank)
-    messagebox.showinfo("Clients", clients_data)
+    clients_string = list_clients(bank)
+    # Split the string into individual client details using 'Razao Social' as the delimiter
+    clients_data = clients_string.split('Razao Social:')[1:] # We skip the first empty string
+    
+    formatted_clients_data = ""
+    for client_str in clients_data:
+        # Extract individual details from the client string
+        name = client_str.split(", CNPJ:")[0].strip()
+        CNPJ = client_str.split(", CNPJ:")[1].split(", Balance:")[0].strip()
+        balance = client_str.split(", Balance:")[1].strip()
+        
+        # Format the details
+        formatted_clients_data += f"Name: {name}\n"
+        formatted_clients_data += f"CNPJ: {CNPJ}\n"
+        formatted_clients_data += f"Balance: {balance}\n"
+        formatted_clients_data += "-----------------------\n"
+    
+    messagebox.showinfo("Clients", formatted_clients_data)
 
 def on_debit():
     CNPJ = simpledialog.askstring("Debit", "Enter your CNPJ:")
+    if not CNPJ:
+        return
     password = simpledialog.askstring("Debit", "Enter your password:", show="*")
+    if not password:
+        return
     amount = simpledialog.askfloat("Debit", "Enter the amount to debit:")
+    if not amount:
+        return
     success, message = debit_from_account(bank, CNPJ, password, amount)
     messagebox.showinfo("Debit", message)
 
 def on_deposit():
     CNPJ = simpledialog.askstring("Deposit", "Enter the CNPJ of the account to deposit into:")
+    if not CNPJ:
+        return
     amount = simpledialog.askfloat("Deposit", "Enter the amount to deposit:")
+    if not amount:
+        return
     success, message = deposit_to_account(bank, CNPJ, amount)
     messagebox.showinfo("Deposit", message)
 
 def on_statement():
     CNPJ = simpledialog.askstring("Statement", "Enter your CNPJ:")
+    if not CNPJ:
+        return
     password = simpledialog.askstring("Statement", "Enter your password:", show="*")
+    if not password:
+        return
     success, statement = get_account_statement(bank, CNPJ, password)
     if success:
         messagebox.showinfo("Statement", statement)
@@ -84,9 +129,17 @@ def on_statement():
 
 def on_transfer():
     source_CNPJ = simpledialog.askstring("Transfer", "Enter your CNPJ:")
+    if not source_CNPJ:
+        return
     password = simpledialog.askstring("Transfer", "Enter your password:", show="*")
+    if not password:
+        return
     dest_CNPJ = simpledialog.askstring("Transfer", "Enter the CNPJ of the destination account:")
+    if not dest_CNPJ:
+        return
     amount = simpledialog.askfloat("Transfer", "Enter the amount to transfer:")
+    if not amount:
+        return
     success, message = transfer_between_accounts(bank, source_CNPJ, password, dest_CNPJ, amount)
     messagebox.showinfo("Transfer", message)
 
@@ -133,3 +186,5 @@ btn_close = tk.Button(canvas, text="Close", command=close_application, width=20,
 canvas.create_window(root.winfo_screenwidth() / 2, 850, window=btn_close)
 
 root.mainloop()
+
+
