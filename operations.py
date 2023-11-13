@@ -188,5 +188,6 @@ def upgrade_account(bank, CNPJ, password):
 
     client.balance -= upgrade_cost
     client.account_type = "Plus"
+    client.add_transaction("Account upgrade", -upgrade_cost)
     return True, "Account upgraded to Plus successfully."
 
