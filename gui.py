@@ -155,9 +155,13 @@ def on_list_clients():
     scrollbar.grid(row=0, column=1, sticky="ns")
 
     separator = "-" * 100  # Separator to make the output more readable
-    for client_info in clients_data:
-        text.insert("end", client_info + "\n" + separator + "\n\n")
-    text.config(state="disabled")
+    if type(clients_data) != str:
+        for client_info in clients_data:
+            text.insert("end", client_info + "\n" + separator + "\n\n")
+        text.config(state="disabled")
+    else:
+        text.insert("end", "Error: "+clients_data)
+        text.config(state="disabled")
 
 
 
