@@ -5,7 +5,7 @@ from PIL import Image, ImageTk
 
 from data_structures import Client, Bank
 from file_handling import load_clients_from_file, save_clients_to_file
-from operations import add_new_client, delete_client, list_clients, debit_from_account, deposit_to_account, get_account_statement, transfer_between_accounts, register_salary, register_auto_debit, calculate_transfer_fee, process_end_of_month_transactions
+from operations import add_new_client, delete_client, list_clients, debit_from_account, deposit_to_account, get_account_statement, transfer_between_accounts, register_salary, register_auto_debit, calculate_transfer_fee, process_end_of_month_transactions, upgrade_account
 bank = Bank()
 process_end_of_month_transactions(bank)
 load_clients_from_file(bank)
@@ -258,6 +258,12 @@ def on_salary():
     Button(salary_window, text="Submit", command=submit_salary).grid(row=2, column=0, columnspan=2)
 
 
+def on_account_upgrade():
+    CNPJ = simpledialog.askstring("Account Upgrade", "Enter your CNPJ:")
+    password = simpledialog.askstring("Account Upgrade", "Enter your password:", show="*")
+    success, message = upgrade_account(bank, CNPJ, password)
+    messagebox.showinfo("Account Upgrade", message)
+
 def close_application():
     save_clients_to_file(bank)
     root.destroy()
@@ -278,34 +284,37 @@ canvas.create_image(0, 0, anchor=tk.NW, image=bg_image)
 
 
 btn_new_client = tk.Button(canvas, text="New Client", command=on_new_client, width=20, height=2)
-canvas.create_window(root.winfo_screenwidth() / 2, 100, window=btn_new_client)
+canvas.create_window(root.winfo_screenwidth() / 2, 250, window=btn_new_client)
 
 btn_delete_client = tk.Button(canvas, text="Delete Client", command=on_delete_client, width=20, height=2)
-canvas.create_window(root.winfo_screenwidth() / 2, 200, window=btn_delete_client)
+canvas.create_window(root.winfo_screenwidth() / 2, 300, window=btn_delete_client)
 
 btn_list_clients = tk.Button(canvas, text="List Clients", command=on_list_clients, width=20, height=2)
-canvas.create_window(root.winfo_screenwidth() / 2, 300, window=btn_list_clients)
+canvas.create_window(root.winfo_screenwidth() / 2, 350, window=btn_list_clients)
 
 btn_debit = tk.Button(canvas, text="Debit", command=on_debit, width=20, height=2)
 canvas.create_window(root.winfo_screenwidth() / 2, 400, window=btn_debit)
 
 btn_salary = tk.Button(root, text="Register Salary", command=on_salary, width=20, height=2)
-canvas.create_window(root.winfo_screenwidth() / 2, 500, window=btn_salary)
+canvas.create_window(root.winfo_screenwidth() / 2, 450, window=btn_salary)
 
 btn_auto_debit = tk.Button(root, text="Register Auto-Debit", command=on_auto_debit, width=20, height=2)
-canvas.create_window(root.winfo_screenwidth() / 2, 600, window=btn_auto_debit)
+canvas.create_window(root.winfo_screenwidth() / 2, 500, window=btn_auto_debit)
 
 btn_deposit = tk.Button(canvas, text="Deposit", command=on_deposit, width=20, height=2)
-canvas.create_window(root.winfo_screenwidth() / 2, 700, window=btn_deposit)
+canvas.create_window(root.winfo_screenwidth() / 2, 550, window=btn_deposit)
 
 btn_statement = tk.Button(canvas, text="Statement", command=on_statement, width=20, height=2)
-canvas.create_window(root.winfo_screenwidth() / 2, 800, window=btn_statement)
+canvas.create_window(root.winfo_screenwidth() / 2, 600, window=btn_statement)
 
 btn_transfer = tk.Button(canvas, text="Transfer", command=on_transfer, width=20, height=2)
-canvas.create_window(root.winfo_screenwidth() / 2, 900, window=btn_transfer)
+canvas.create_window(root.winfo_screenwidth() / 2, 650, window=btn_transfer)
 
 btn_close = tk.Button(canvas, text="Close", command=close_application, width=20, height=2)
-canvas.create_window(root.winfo_screenwidth() / 2, 1000, window=btn_close)
+canvas.create_window(root.winfo_screenwidth() / 2, 700, window=btn_close)
+
+btn_upgrade_account = tk.Button(canvas, text="Upgrade Account", command=on_account_upgrade, width=20, height=2)
+canvas.create_window(root.winfo_screenwidth() / 2, 750, window=btn_upgrade_account)
 
 root.mainloop()
 

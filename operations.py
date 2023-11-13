@@ -175,3 +175,25 @@ def process_end_of_month_transactions(bank):
         client.last_processed_month = current_month
         client.last_processed_year = current_year
 
+
+def upgrade_account(bank, CNPJ, password):
+    client = bank.get_client(CNPJ)
+    if not client:
+        return False, "Client not found!"
+
+    if client.password != password:
+        return False, "Incorrect password!"
+
+    upgrade_cost = 100000  # Set the upgrade cost
+
+    if client.balance < upgrade_cost:
+        return False, "Insufficient balance for account upgrade."
+
+    if client.account_type == "Plus":
+        return False, "Account is already a Plus account."
+
+    # Deduct the upgrade cost and change the account type
+    client.balance -= upgrade_cost
+    client.account_type = "Plus"
+    return True, "Account upgraded to Plus successfully."
+
