@@ -12,7 +12,8 @@ class Client:
         self.auto_debits = {}  
         self.set_overdraft_limit()  
         self.last_processed_month = None
-        self.last_processed_year = None 
+        self.last_processed_year = None
+        self.salary = 0
         
     def set_overdraft_limit(self):
         if self.account_type == "Plus":

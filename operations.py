@@ -110,8 +110,9 @@ def get_account_statement(bank, CNPJ, password):
     statement += "Upcoming Auto-Debits and Salary:\n"
     for company, amount in client.auto_debits.items():
         statement += f"Auto-debit to {company}: -R${amount}\n"
-    if client.salary > 0:
-        statement += f"Salary credit: +R${client.salary}\n\n"
+    if client.salary:
+        if client.salary > 0:
+            statement += f"Salary credit: +R${client.salary}\n\n"
     
     statement += "Transaction History:\n"
     for transaction in client.transactions:
