@@ -278,7 +278,7 @@ canvas.pack(fill=tk.BOTH, expand=True)
 
 # bg_image = tk.PhotoImage(file="image/QuemPupaTem.png")
 
-image = Image.open("image/QPM.jpg")
+image = Image.open("image/QuemPoupaTemRevisado.png")
 bg_image = ImageTk.PhotoImage(image)
 canvas.create_image(0, 0, anchor=tk.NW, image=bg_image)
 
@@ -311,10 +311,10 @@ btn_transfer = tk.Button(canvas, text="Transfer", command=on_transfer, width=20,
 canvas.create_window(root.winfo_screenwidth() / 2, 650, window=btn_transfer)
 
 btn_close = tk.Button(canvas, text="Close", command=close_application, width=20, height=2)
-canvas.create_window(root.winfo_screenwidth() / 2, 700, window=btn_close)
+canvas.create_window(root.winfo_screenwidth() / 2, 800, window=btn_close)
 
 btn_upgrade_account = tk.Button(canvas, text="Upgrade Account", command=on_account_upgrade, width=20, height=2)
-canvas.create_window(root.winfo_screenwidth() / 2, 750, window=btn_upgrade_account)
+canvas.create_window(root.winfo_screenwidth() / 2, 700, window=btn_upgrade_account)
 
 root.mainloop()
 
