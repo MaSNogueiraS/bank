@@ -247,8 +247,8 @@ def on_salary():
 
 
 def on_account_upgrade():
-    CNPJ = simpledialog.askstring("Account Upgrade", "Enter your CNPJ:")
-    password = simpledialog.askstring("Account Upgrade", "Enter your password:", show="*")
+    CNPJ = simpledialog.askstring("Account Upgrade, 100k cost", "Enter your CNPJ:")
+    password = simpledialog.askstring("Account Upgrade, 100k cost", "Enter your password:", show="*")
     success, message = upgrade_account(bank, CNPJ, password)
     messagebox.showinfo("Account Upgrade", message)
 
