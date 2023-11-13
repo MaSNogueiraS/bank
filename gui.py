@@ -138,32 +138,25 @@ def on_list_clients():
     # estimated_width = min(1200, max(400, max_length * 7))  # Adjust the multiplier as needed # Do not work as intended
     estimated_width = 800
 
-    # Create a new window
     client_window = Toplevel(root)
     client_window.title("List of Clients")
 
-    # Center the window
     screen_width = root.winfo_screenwidth()
     screen_height = root.winfo_screenheight()
     x = (screen_width // 2) - (estimated_width // 2)
-    y = (screen_height // 2) - 300  # Half of the fixed height
-    client_window.geometry(f"{estimated_width}x600+{x}+{y}")  # Fixed height of 600
+    y = (screen_height // 2) - 300  
+    client_window.geometry(f"{estimated_width}x600+{x}+{y}")  
 
-    # Create a Text widget with a Scrollbar
-    text = Text(client_window, wrap="word")  # Enable word wrapping
+    text = Text(client_window, wrap="word")
     scrollbar = Scrollbar(client_window, command=text.yview)
     text.configure(yscrollcommand=scrollbar.set)
 
-    # Grid layout
     text.grid(row=0, column=0, sticky="nsew")
     scrollbar.grid(row=0, column=1, sticky="ns")
 
-    # Insert client data into the Text widget with a visual separator
-    separator = "-" * 100  # A line of dashes as a separator
+    separator = "-" * 100  # Separator to make the output more readable
     for client_info in clients_data:
         text.insert("end", client_info + "\n" + separator + "\n\n")
-
-    # Make the Text widget read-only
     text.config(state="disabled")
 
 
@@ -206,7 +199,6 @@ def on_statement():
         messagebox.showerror("Error", statement)
 
 def on_transfer():
-    # Collecting the necessary details for the transfer
     source_CNPJ = simpledialog.askstring("Transfer", "Enter your CNPJ:")
     if not source_CNPJ:
         return
@@ -218,16 +210,13 @@ def on_transfer():
         return
     amount = simpledialog.askfloat("Transfer", "Enter the amount to transfer:")
 
-    # Assuming a function 'calculate_transfer_fee' exists in operations.py
     fee = calculate_transfer_fee(bank, source_CNPJ, amount)
     total_amount = amount + fee
 
-    # Function to perform the actual transfer
     def perform_transfer():
         success, message = transfer_between_accounts(bank, source_CNPJ, password, dest_CNPJ, amount)
         messagebox.showinfo("Transfer", message)
 
-    # Confirmation dialog
     confirm_window = Toplevel(root)
     confirm_window.title("Confirm Transfer")
     Label(confirm_window, text=f"Transfer Amount: {amount}\nFee: {fee}\nTotal: {total_amount}").grid(row=0, column=0, columnspan=2)
@@ -238,7 +227,6 @@ def on_salary():
     salary_window = Toplevel(root)
     salary_window.title("Salary Registration")
 
-    # Fields for CNPJ and salary amount
     Label(salary_window, text="CNPJ:").grid(row=0, column=0)
     CNPJ_entry = Entry(salary_window)
     CNPJ_entry.grid(row=0, column=1)
