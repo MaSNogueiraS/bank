@@ -57,20 +57,18 @@ def debit_from_account(bank, CNPJ, password, amount):
 def calculate_transfer_fee(bank, source_CNPJ, amount):
     client = bank.get_client(source_CNPJ)
     if client:
-        # Use the method from the Client class to calculate the fee
         fee = client.calculate_debit_fee(amount)
         return fee
     else:
-        return 0  # Return 0 or handle the error as you see fit
+        return 0  # Return 0 if client not found
     
 def register_auto_debit(bank, CNPJ, company, amount):
     client = bank.get_client(CNPJ)
     if client:
-        # Assuming 'auto_debits' is a dictionary in the Client class to store auto-debit info
         if company in client.auto_debits:
-            client.auto_debits[company] += amount  # Update existing auto-debit
+            client.auto_debits[company] += amount  
         else:
-            client.auto_debits[company] = amount  # Add new auto-debit
+            client.auto_debits[company] = amount  
         return True, f"Auto-debit of {amount} for {company} registered for CNPJ {CNPJ}."
     else:
         return False, "Client not found."
@@ -109,7 +107,6 @@ def get_account_statement(bank, CNPJ, password):
     statement += f"Balance: R${client.balance}\n"
     statement += f"Password: {client.password}\n\n"
 
-    # Add upcoming auto-debits and salary
     statement += "Upcoming Auto-Debits and Salary:\n"
     for company, amount in client.auto_debits.items():
         statement += f"Auto-debit to {company}: -R${amount}\n"
@@ -154,11 +151,9 @@ def process_end_of_month_transactions(bank):
     current_year = current_date.year
 
     for CNPJ, client in bank.clients.items():
-        # Check if transactions for the current month and year have already been processed
         if (client.last_processed_month == current_month and client.last_processed_year == current_year):
-            continue  # Skip if already processed this month and year
+            continue  
 
-        # Process auto-debits
         for company, amount in client.auto_debits.items():
             if client.balance - amount >= client.overdraft_limit:
                 client.balance -= amount
@@ -166,12 +161,10 @@ def process_end_of_month_transactions(bank):
             else:
                 client.add_transaction(f"Failed auto-debit to {company}", 0)
 
-        # Process salary
         if client.salary > 0:
             client.balance += client.salary
             client.add_transaction("Salary deposit", client.salary)
 
-        # Update the last processed month and year
         client.last_processed_month = current_month
         client.last_processed_year = current_year
 
@@ -184,7 +177,7 @@ def upgrade_account(bank, CNPJ, password):
     if client.password != password:
         return False, "Incorrect password!"
 
-    upgrade_cost = 100000  # Set the upgrade cost
+    upgrade_cost = 100000  
 
     if client.balance < upgrade_cost:
         return False, "Insufficient balance for account upgrade."
@@ -192,7 +185,6 @@ def upgrade_account(bank, CNPJ, password):
     if client.account_type == "Plus":
         return False, "Account is already a Plus account."
 
-    # Deduct the upgrade cost and change the account type
     client.balance -= upgrade_cost
     client.account_type = "Plus"
     return True, "Account upgraded to Plus successfully."
