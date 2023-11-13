@@ -9,6 +9,25 @@ class Client:
         self.balance = balance
         self.password = password
         self.transactions = []
+        self.auto_debits = {}  # Assuming you have already added this for auto-debits
+        self.set_overdraft_limit()  # Initialize the overdraft limit based on account type
+        self.last_processed_month = None
+        self.last_processed_year = None 
+        
+    def set_overdraft_limit(self):
+        if self.account_type == "Plus":
+            self.overdraft_limit = -5000.0
+        else:  # Default to "Comum"
+            self.overdraft_limit = -1000.0
+
+    def set_salary(self, amount):
+        self.salary = amount
+
+    def calculate_debit_fee(self, amount):
+        if self.account_type == "Plus":
+            return amount * 0.03
+        else:  # Default to "Comum"
+            return amount * 0.05
 
     def add_transaction(self, description, amount):
         transaction = {
