@@ -10,6 +10,8 @@ bank = Bank()
 process_end_of_month_transactions(bank)
 load_clients_from_file(bank)
 
+
+# This function centrilize the windows based on the actual screen ( I forgot i made it and did not use in all the windows, now is late for this, sorry)
 def centralize_window(window):
     window.update()
     screen_width = window.winfo_screenwidth()
@@ -20,6 +22,8 @@ def centralize_window(window):
     y = (screen_height - height) // 2
     window.geometry(f"{width}x{height}+{x}+{y}")
 
+
+#This function is called when the new client button is pressed, this comunicates with the operations that comunicate with the data structure then the operations return the values to be display
 def on_new_client():
     window = Toplevel(root)
     window.title("New Client")
@@ -64,6 +68,8 @@ def on_new_client():
     submit_button.place(relx=0.5, rely=0.95, anchor=tk.CENTER)
     centralize_window(window)
 
+# Same for delet clients
+
 def on_delete_client():
     CNPJ = simpledialog.askstring("Delete Client", "Enter the CNPJ of the client to delete:")
     if not CNPJ:
@@ -71,6 +77,7 @@ def on_delete_client():
     success, message = delete_client(bank, CNPJ)
     messagebox.showinfo("Info", message)
 
+#Same
 def on_auto_debit():
     auto_debit_window = Toplevel(root)
     auto_debit_window.title("Auto-Debit Registration")
@@ -99,7 +106,7 @@ def on_auto_debit():
 
     Button(auto_debit_window, text="Submit", command=submit_auto_debit).grid(row=3, column=0, columnspan=2)
 
-
+#Same
 def on_auto_debit():
     window = Toplevel(root)
     window.title("Auto Debit Registration")
@@ -129,7 +136,7 @@ def on_auto_debit():
 
     Button(window, text="Submit", command=submit_auto_debit).grid(row=3, column=0, columnspan=2)
 
-
+#..
 def on_list_clients():
     clients_data = list_clients(bank)
 
@@ -165,7 +172,7 @@ def on_list_clients():
 
 
 
-
+#..
 def on_debit():
     CNPJ = simpledialog.askstring("Debit", "Enter your CNPJ:")
     if not CNPJ:
@@ -179,6 +186,7 @@ def on_debit():
     success, message = debit_from_account(bank, CNPJ, password, amount)
     messagebox.showinfo("Debit", message)
 
+#Basic all the defs in this code just comunicates with the operations :)
 def on_deposit():
     CNPJ = simpledialog.askstring("Deposit", "Enter the CNPJ of the account to deposit into:")
     if not CNPJ:
@@ -260,6 +268,8 @@ def close_application():
     save_clients_to_file(bank)
     root.destroy()
 
+# Here i create the total Canvas
+
 root = tk.Tk()
 root.title("Banking System")
 
@@ -270,11 +280,13 @@ canvas.pack(fill=tk.BOTH, expand=True)
 
 # bg_image = tk.PhotoImage(file="image/QuemPupaTem.png")
 
+# Here i set the background
 image = Image.open("image/QuemPoupaTemRevisado.png")
 bg_image = ImageTk.PhotoImage(image)
 canvas.create_image(0, 0, anchor=tk.NW, image=bg_image)
 
 
+# Here i create and set the buttons positions
 btn_new_client = tk.Button(canvas, text="New Client", command=on_new_client, width=20, height=2)
 canvas.create_window(root.winfo_screenwidth() / 2, 250, window=btn_new_client)
 

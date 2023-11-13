@@ -2,6 +2,7 @@
 import datetime
 
 class Client:
+    #This sets the clients and all the infos it have, this is super important for the operations to work
     def __init__(self, razao_social, CNPJ, account_type, balance=0.0, password=""):
         self.razao_social = razao_social
         self.CNPJ = CNPJ
@@ -39,6 +40,7 @@ class Client:
         self.transactions.append(transaction)
 
 class Bank:
+    #This is a simple class that i use to navigate between the clients basically
     def __init__(self):
         self.clients = {}
 

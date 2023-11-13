@@ -3,8 +3,12 @@ from tkinter import messagebox
 from data_structures import Client
 import datetime
 
+# Here is where all the actual calculations and process of inputs happen
+# Basically it reads the client data, and with the input it perform a function
 
+#this add the new client
 def add_new_client(bank, razao_social, CNPJ, account_type, initial_balance, password):
+    #This checks if the cnpj already exists in the clients bank
     if CNPJ in bank.clients:
         return False, "Client with this CNPJ already exists!"
     
@@ -12,6 +16,7 @@ def add_new_client(bank, razao_social, CNPJ, account_type, initial_balance, pass
     bank.add_client(client)
     return True, "Client added successfully!"
 
+#this one deletes a client
 def delete_client(bank, CNPJ):
     if CNPJ not in bank.clients:
         return False, "No client with this CNPJ found!"
@@ -19,16 +24,19 @@ def delete_client(bank, CNPJ):
     del bank.clients[CNPJ]
     return True, "Client deleted successfully!"
 
+#This one list the clients
 def list_clients(bank):
     if not bank.clients:
         return "No clients to display."
     
     client_list = []
+    #because i save the clients this way i can check the type of what is return to perform differnts displays, the way i did in the beggining was a mess, you can check in my git MaSNogueiraS on the bank rep, dev branch, see the comits history
     for client in bank.clients.values():
         client_list.append(f"Razao Social: {client.razao_social}, CNPJ: {client.CNPJ}, Balance: {client.balance}") 
     
     return client_list
 
+#This debits from an account
 def debit_from_account(bank, CNPJ, password, amount):
     client = bank.get_client(CNPJ)
     if not client:
@@ -37,9 +45,11 @@ def debit_from_account(bank, CNPJ, password, amount):
     if client.password != password:
         return False, "Incorrect password!"
     
+    # here i calculate the fee based on the ammount of money to debit and the account type
     fee_percentage = 0.05 if client.account_type == "comum" else 0.03
     total_amount = amount + (amount * fee_percentage)
-    
+
+    #This checks the limits for the account type, so it do not pass the minimum an account can have
     if client.balance - total_amount < (-1000 if client.account_type == "comum" else -5000):
         return False, "Insufficient balance for the transaction!"
     
@@ -54,6 +64,7 @@ def debit_from_account(bank, CNPJ, password, amount):
     else:
         return False, "Insufficient funds or overdraft limit reached."
     
+#this function is used by the gui to display the fee for the transfer so the client can confirm it our cancel if the fee is to high
 def calculate_transfer_fee(bank, source_CNPJ, amount):
     client = bank.get_client(source_CNPJ)
     if client:
@@ -61,6 +72,8 @@ def calculate_transfer_fee(bank, source_CNPJ, amount):
         return fee
     else:
         return 0  # Return 0 if client not found
+    
+#This register in the client an debt, with the name of the company to debt
     
 def register_auto_debit(bank, CNPJ, company, amount):
     client = bank.get_client(CNPJ)
@@ -74,6 +87,7 @@ def register_auto_debit(bank, CNPJ, company, amount):
         return False, "Client not found."
     
 
+#This just add a salary that will be add at the end of the month
 def register_salary(bank, CNPJ, salary_amount):
     client = bank.get_client(CNPJ)
     if client:
@@ -83,16 +97,19 @@ def register_salary(bank, CNPJ, salary_amount):
         return False, "Client not found."
     
 
+#this deposit to the account
 def deposit_to_account(bank, CNPJ, amount):
     client = bank.get_client(CNPJ)
     if not client:
         return False, "Client not found!"
     
     client.balance += amount
+    #also, this function, that i created in the client class, is the one that writes the moviments in the account, it is used in other parts of the codes as well, to keep track of things
     client.add_transaction("Deposit", amount)
     
     return True, f"Deposited R${amount}. New balance: R${client.balance}"
 
+#This return the account statement to be displayed in the gui
 def get_account_statement(bank, CNPJ, password):
     client = bank.get_client(CNPJ)
     if not client:
@@ -119,13 +136,14 @@ def get_account_statement(bank, CNPJ, password):
         statement += f"{transaction['date']} - {transaction['description']}: R${transaction['amount']}\n"
     
     return True, statement
+#statement could be a list, i made this way because it was the way i did everything, the client list was a str hehe (have to mod it :p)
 
 
-
+# this transfer between the accounts, use the calculos of the fee i mention earlyer
 def transfer_between_accounts(bank, source_CNPJ, password, dest_CNPJ, amount):
     source_client = bank.get_client(source_CNPJ)
     dest_client = bank.get_client(dest_CNPJ)
-
+    # in the gui will be a confirmation 
     if source_client and dest_client and source_client.password == password:
         fee = source_client.calculate_debit_fee(amount)
         total_amount = amount + fee
@@ -143,9 +161,7 @@ def transfer_between_accounts(bank, source_CNPJ, password, dest_CNPJ, amount):
     else:
         return False, "Invalid CNPJ or password."
     
-
-import datetime
-
+#This function made the debits and salary work, i know that it probably wont be tested but it checks the day and then chack all the clients debits and salaries, then it perform the intended operations and save on the client the month and year so it perform the operations only one time
 def process_end_of_month_transactions(bank):
     current_date = datetime.datetime.now()
     current_month = current_date.month
@@ -165,11 +181,12 @@ def process_end_of_month_transactions(bank):
         if client.salary > 0:
             client.balance += client.salary
             client.add_transaction("Salary deposit", client.salary)
-
+        #this sets the month and year
         client.last_processed_month = current_month
         client.last_processed_year = current_year
 
 
+#This upgrades the account type
 def upgrade_account(bank, CNPJ, password):
     client = bank.get_client(CNPJ)
     if not client:
@@ -177,7 +194,7 @@ def upgrade_account(bank, CNPJ, password):
 
     if client.password != password:
         return False, "Incorrect password!"
-
+    #you can change the cost here 
     upgrade_cost = 100000  
 
     if client.balance < upgrade_cost:
@@ -191,3 +208,4 @@ def upgrade_account(bank, CNPJ, password):
     client.add_transaction("Account upgrade", -upgrade_cost)
     return True, "Account upgraded to Plus successfully."
 
+# So basically the real code is here, therefore it depends on the other parts i consider this the most important part
